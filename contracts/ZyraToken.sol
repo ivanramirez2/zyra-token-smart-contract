@@ -3,14 +3,19 @@
 pragma solidity 0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract ZyraToken is ERC20 {
+contract ZyraToken is ERC20, Pausable {
 
     // Variables
+
     address public owner;
 
 
+
+
     // Modifiers
+
     modifier onlyOwner(){
         require(msg.sender == owner, "Not the owner");
         _;
@@ -21,11 +26,20 @@ contract ZyraToken is ERC20 {
         owner = msg.sender;
     }
 
+
+
     // Events
+
     event TransferNewOwner( address indexed previousOwner, address indexed newOwner);
-    event TokenMinted(address to_, uint256 amount_);
+
+    event TokenMinted(address , uint256 amount);
+    
+    event TokenBurned(address indexed from, uint256 amount);
+
+
 
     // External functions
+
     function mintTokens(address to_, uint256 amount_) public onlyOwner {
         require(to_ != address(0), "Invalid address");
         require(amount_ > 0, "Amount must be greater than zero");
@@ -43,8 +57,22 @@ contract ZyraToken is ERC20 {
         emit TransferNewOwner(previousOwner, newOwner_);
     }
 
+    function burn(uint256 amount_) public {
+        require(balanceOf(msg.sender) >= amount_, "Insufficient balance to burn");
+        require(amount_ > 0, "Amount must be greater than zero");
+        _burn(msg.sender, amount_);
+
+        emit TokenBurned(msg.sender, amount_);
+    }
+
+    function pause() public onlyOwner(){
+        _pause();
+    }
+
+    function unpause() public onlyOwner(){
+        _unpause();
+    }
+ 
     // Internal functions
-
-
-
+    
 }
