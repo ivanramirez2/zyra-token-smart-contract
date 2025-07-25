@@ -32,7 +32,7 @@ contract ZyraToken is ERC20, Pausable {
 
     event TransferNewOwner( address indexed previousOwner, address indexed newOwner);
 
-    event TokenMinted(address , uint256 amount);
+    event TokenMinted(address to, uint256 amount);
     
     event TokenBurned(address indexed from, uint256 amount);
 
